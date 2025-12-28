@@ -94,3 +94,13 @@ def recommend():
 
     tags = Tag.query.all()
     return render_template('recommend.html', movies=recommended_movies, tags=tags)
+
+@main.route('/search')
+def search_movies():
+    query = request.args.get('query', '')
+    if query:
+        # 这里根据你的数据模型进行查询
+        movies = Movie.query.filter(Movie.title.like(f'%{query}%')).all()
+    else:
+        movies = []
+    return render_template('search_results.html', movies=movies, query=query)

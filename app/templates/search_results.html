@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}
+  电影搜索结果 - {{ query }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <!-- 搜索头部 -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2>搜索结果：<span class="text-primary">"{{ query }}"</span></h2>
+      <p class="text-muted">
+        {% if movies %}
+          共找到 {{ movies|length }} 部相关电影
+        {% else %}
+          未找到与 "{{ query }}" 相关的电影，请尝试其他关键词
+        {% endif %}
+      </p>
+      <hr>
+    </div>
+  </div>
+
+  <!-- 电影列表展示 -->
+  <div class="row g-4">
+    {% if movies %}
+      {% for movie in movies %}
+        <div class="col-md-4 col-lg-3">
+          <div class="card h-100 shadow-sm">
+            <!-- 电影封面图（保持不变） -->
+            {% if movie.poster_url %}
+               <img src="/static/posters/{{ movie.poster_url }}" class="img-fluid rounded shadow" alt="{{ movie.title }} 海报"
+             style="max-height: 500px;">
+            {% else %}
+              <img src="{{ url_for('static', filename='images/default-movie.jpg') }}"
+                   class="card-img-top"
+                   alt="默认电影封面"
+                   style="height: 200px; object-fit: cover;">
+            {% endif %}
+
+            <div class="card-body">
+              <!-- 核心修改：将 movie.name 改为 movie.title -->
+              <h5 class="card-title">{{ movie.title }}</h5>
+              <p class="card-text text-truncate">{{ movie.description|default('暂无影片描述', true) }}</p>
+              <a href="{{ url_for('main.movie_detail', movie_id=movie.id) }}" class="btn btn-sm btn-primary w-100">
+                查看详情
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="col-12 text-center py-5">
+        <div class="text-muted fs-4 mb-3">😕 没有找到相关电影</div>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">返回首页</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
