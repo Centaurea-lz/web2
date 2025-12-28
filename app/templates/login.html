@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}登录 - 影视评论网{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white text-center">
+                <h4 class="mb-0">用户登录</h4>
+            </div>
+            <div class="card-body">
+                <!-- 表单添加method="POST" + csrf_token隐藏字段 -->
+                <form method="POST" action="{{ url_for('auth.login') }}">
+                    <!-- 核心：添加CSRF令牌隐藏字段 -->
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">用户名</label>
+                        <input type="text" class="form-control" id="username" name="username"
+                               placeholder="请输入用户名" required aria-describedby="username-help">
+                        <div id="username-help" class="form-text">测试账号：testuser</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">密码</label>
+                        <input type="password" class="form-control" id="password" name="password"
+                               placeholder="请输入密码" required aria-describedby="password-help">
+                        <div id="password-help" class="form-text">测试密码：123456</div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">登录</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <p class="mb-0">还没有账号？<a href="{{ url_for('auth.register') }}">立即注册</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

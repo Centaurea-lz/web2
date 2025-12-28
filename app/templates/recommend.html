@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}个性化推荐 - 影视评论网{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">为你推荐</h1>
+<div class="row g-4">
+    {% for movie in movies %}
+    <div class="col-md-4 col-lg-3">
+        <div class="card h-100 shadow-sm" aria-labelledby="rec-movie-title-{{ movie.id }}">
+            <img src="/static/posters/{{ movie.poster_url }}" class="card-img-top" alt="{{ movie.title }} 海报"
+                 style="height: 300px; object-fit: cover;">
+            <div class="card-body">
+                <h5 class="card-title" id="rec-movie-title-{{ movie.id }}">{{ movie.title }}</h5>
+                <h6 class="card-subtitle text-muted mb-2">{{ movie.release_year }}</h6>
+                <div class="mb-2">
+                    {% for tag in movie.tags %}
+                    <span class="badge bg-secondary">{{ tag.name }}</span>
+                    {% endfor %}
+                </div>
+                <p class="card-text text-truncate-3">{{ movie.description }}</p>
+            </div>
+            <div class="card-footer bg-transparent">
+                <a href="{{ url_for('main.movie_detail', movie_id=movie.id) }}" class="btn btn-sm btn-primary">查看详情</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center">
+        <p class="text-muted fs-4">暂无推荐内容</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

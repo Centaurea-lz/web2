@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 影视评论网{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">影视列表</h1>
+<div class="row g-4">
+    {% for movie in movies %}
+    <div class="col-md-4 col-lg-3">
+        <div class="card h-100 shadow-sm" aria-labelledby="movie-title-{{ movie.id }}">
+            <!-- 电影海报 -->
+            <img src="/static/posters/{{ movie.poster_url }}" class="card-img-top" alt="{{ movie.title }} 海报"
+                 style="height: 300px; object-fit: cover;">
+            <div class="card-body">
+                <h5 class="card-title" id="movie-title-{{ movie.id }}">{{ movie.title }}</h5>
+                <h6 class="card-subtitle text-muted mb-2">{{ movie.release_year }}</h6>
+                <!-- 标签 -->
+                <div class="mb-2">
+                    {% for tag in movie.tags %}
+                    <span class="badge bg-secondary">{{ tag.name }}</span>
+                    {% endfor %}
+                </div>
+                <!-- 简介（截断） -->
+                <p class="card-text text-truncate-3">{{ movie.description }}</p>
+            </div>
+            <div class="card-footer bg-transparent d-flex justify-content-between">
+                <a href="{{ url_for('main.movie_detail', movie_id=movie.id) }}" class="btn btn-sm btn-primary">查看详情</a>
+                {% if current_user.is_authenticated %}
+                <button id="like-btn-{{ movie.id }}" class="btn btn-sm btn-outline-success"
+                        onclick="likeMovie({{ movie.id }})"
+                        {% if current_user in movie.likers %}disabled{% endif %}>
+                    {% if current_user in movie.likers %}已点赞{% else %}点赞{% endif %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center">
+        <p class="text-muted fs-4">暂无影视数据</p>
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

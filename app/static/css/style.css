@@ -1,0 +1,41 @@
+/* 全局样式 */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* 评论文本截断（3行） */
+.text-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* 无障碍焦点样式（提升键盘导航体验） */
+.btn:focus, .form-control:focus, .nav-link:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .card-img-top {
+        height: 250px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-nav {
+        align-items: center;
+    }
+    .card-img-top {
+        height: 200px !important;
+    }
+}
+
