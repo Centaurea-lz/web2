@@ -28,7 +28,7 @@
                 {% if current_user.is_authenticated %}
                 <button id="like-btn-{{ movie.id }}" class="btn btn-sm btn-outline-success"
                         onclick="likeMovie({{ movie.id }})"
-                        {% if current_user in movie.likers %}disabled{% endif %}>
+                        {% if current_user in movie.likers %}{% endif %}>
                     {% if current_user in movie.likers %}已点赞{% else %}点赞{% endif %}
                 </button>
                 {% endif %}

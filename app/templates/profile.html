@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="profile-page" style="max-width: 1200px; margin: 20px auto; padding: 0 20px;">
+    <!-- 个人信息展示 -->
+    <div class="user-info" style="padding: 20px; border-bottom: 1px solid #eee; margin-bottom: 30px;">
+        <h2>{{ user.username }} 的个人中心</h2>
+        <p><strong>邮箱：</strong>{{ user.email }}</p>
+        <p><strong>已点赞电影数量：</strong>{{ liked_movies | length }}</p>
+    </div>
+
+    <!-- 个人点赞电影列表 -->
+    <div class="liked-movies-section">
+        <h3 style="font-size: 1.5rem; margin-bottom: 20px;">我点赞的电影</h3>
+
+        {% if liked_movies %}
+        <div class="movies-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+            {% for movie in liked_movies %}
+            <div class="movie-card" style="border: 1px solid #eee; border-radius: 8px; padding: 10px; text-align: center;">
+                <!-- 电影海报 -->
+                <img src="/static/posters/{{ movie.poster_url }}" alt="{{ movie.title }} 海报"
+                     style="width: 100%; height: 280px; object-fit: cover; border-radius: 4px; margin-bottom: 10px;">
+                <!-- 电影信息 -->
+                <h4 style="margin: 5px 0;">{{ movie.title }}</h4>
+                <p style="color: #666; margin: 5px 0;">上映年份：{{ movie.release_year or '未知' }}</p>
+                <!-- 查看电影详情链接 -->
+                <a href="{{ url_for('main.movie_detail', movie_id=movie.id) }}"
+                   style="display: inline-block; margin-top: 10px; padding: 6px 12px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9rem;">
+                    查看详情
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- 无点赞电影时的提示 -->
+        <div class="no-liked-movies" style="padding: 40px; text-align: center; color: #666; border: 1px dashed #eee; border-radius: 8px;">
+            <p>你还没有点赞任何电影哦，快去首页发现精彩电影吧！</p>
+            <a href="{{ url_for('main.index') }}" style="color: #007bff; text-decoration: none;">
+                前往首页
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

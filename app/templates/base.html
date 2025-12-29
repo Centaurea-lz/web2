@@ -52,7 +52,7 @@
                 <!-- 用户认证入口 -->
                 <div class="navbar-nav">
                     {% if current_user.is_authenticated %}
-                    <span class="nav-link">欢迎，{{ current_user.username }}</span>
+                    <span class="nav-link"><a href="{{ url_for('main.profile') }}">欢迎，{{ current_user.username }}</a></span>
                     <a class="nav-link" href="{{ url_for('auth.logout') }}">退出</a>
                     {% else %}
                     <a class="nav-link {% if request.endpoint == 'auth.login' %}active{% endif %}"

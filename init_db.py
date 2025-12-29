@@ -22,7 +22,7 @@ def init_db():
         db.create_all()
 
         # 1. 预填充标签
-        tag_names = ['科幻', '悬疑', '喜剧', '爱情', '动作', '恐怖', '动画', '纪录片']
+        tag_names = ['科幻', '悬疑', '喜剧', '爱情', '动作', '恐怖', '动画', '纪录片','剧情','魔幻']
         tags = []
         for name in tag_names:
             tag = Tag(name=name)
@@ -237,6 +237,261 @@ def init_db():
                                "本作为鲁邦三世第一部剧场版，于1978年12月16日上映。 ",
                 "poster_url": "lbss.jpg",
                 "tags": [tags[1], tags[6]]
+            },
+            {
+                "title": "盗梦空间",
+                "release_year": 2010,
+                "description": "盗梦师柯布带领团队潜入他人梦境，窃取机密信息，此次却接到反向任务——植入思想，任务过程中遭遇层层危险与记忆的牵绊。",
+                "poster_url": "Inception.jpg",
+                "tags": [tags[0], tags[1],tags[4]]
+            },
+            {
+                "title": "流浪地球",
+                "release_year": 2019,
+                "description": "当地球面临太阳氦闪危机，人类打造巨型行星发动机，推动地球开启2500年的宇宙流浪之旅，途中遭遇木星引力危机，众人拼死救援。",
+                "poster_url": "TheWanderingEarth.jpg",
+                "tags": [tags[0], tags[4]]
+            },
+
+            {
+                "title": "肖申克的救赎",
+                "release_year": 1994,
+                "description": "银行家安迪被冤判谋杀妻子，投入肖申克监狱，在暗无天日的牢笼中，他凭借智慧与坚韧，耗时数十年完成自我救赎与对自由的追寻。",
+                "poster_url": "TheShawshankRedemption.jpg",
+                "tags": [tags[1], tags[8]]  # 剧情、犯罪
+            },
+            {
+                "title": "复仇者联盟4：终局之战",
+                "release_year": 2019,
+                "description": "灭霸弹指间消灭宇宙一半生命，幸存的复仇者们穿越时空，收集无限宝石，试图逆转浩劫，与灭霸展开终极决战，落幕一代英雄传奇。",
+                "poster_url": "AvengersEndgame.jpg",
+                "tags": [tags[0], tags[4]]  # 科幻、动作
+            },
+            {
+                "title": "泰坦尼克号",
+                "release_year": 1997,
+                "description": "贵族少女露丝与穷画家杰克在泰坦尼克号上相遇相恋，阶级差异未能阻挡两人的深情，而这艘永不沉没的巨轮，正朝着冰山缓缓驶去。",
+                "poster_url": "Titanic.jpg",
+                "tags": [tags[3], tags[8]]  # 爱情、剧情
+            },
+
+            {
+                "title": "蝙蝠侠：黑暗骑士",
+                "release_year": 2008,
+                "description": "蝙蝠侠与戈登、哈维联手打击犯罪，小丑的出现打破平静，他以混乱为乐，不断制造危机，考验着蝙蝠侠的底线与哥谭市的正义。",
+                "poster_url": "TheDarkKnight.jpg",
+                "tags": [tags[4], tags[1]]
+            },
+            {
+                "title": "阿甘正传",
+                "release_year": 1994,
+                "description": "智商不高的阿甘，用纯粹的本心面对人生，从橄榄球健将到越战英雄，从虾船船长到亿万富翁，他的一生串联起美国数十年的时代变迁。",
+                "poster_url": "ForrestGump.jpg",
+                "tags": [tags[8], tags[2]]  # 剧情、冒险
+            },
+            {
+                "title": "疯狂的麦克斯4：狂暴之路",
+                "release_year": 2015,
+                "description": "后启示录时代，世界一片荒芜，麦克斯被叛军俘获，与反叛的弗瑞奥萨女士联手，驾驶战车在沙漠中展开一场生死逃亡与复仇之战。",
+                "poster_url": "MadMaxFuryRoad.jpg",
+                "tags": [tags[4], tags[8]]  # 动作、冒险
+            },
+            {
+                "title": "教父",
+                "release_year": 1972,
+                "description": "柯里昂家族是纽约五大黑手党家族之一，老教父遇袭后，小儿子迈克尔被迫卷入家族事务，从一个普通青年成长为冷酷的黑帮教父。",
+                "poster_url": "TheGodfather.jpg",
+                "tags": [tags[8]]  # 剧情、犯罪
+            },
+            {
+                "title": "银翼杀手2049",
+                "release_year": 2017,
+                "description": "复制人杀手K在执行任务时，发现了一个足以颠覆世界的秘密——复制人能够生育后代，他踏上寻找真相的道路，也揭开了自己的身世之谜。",
+                "poster_url": "BladeRunner2049.jpg",
+                "tags": [tags[0], tags[1]]  # 科幻、悬疑
+            },
+            {
+                "title": "情书",
+                "release_year": 1995,
+                "description": "渡边博子在未婚夫藤井树去世后，意外寄出一封往天国的情书，却收到了同名同姓的女子回信，两人的通信逐渐揭开一段尘封的青春暗恋。",
+                "poster_url": "LoveLetter.jpg",
+                "tags": [tags[3], tags[8]]  # 爱情、剧情
+            },
+            {
+                "title": "侏罗纪世界",
+                "release_year": 2015,
+                "description": "侏罗纪公园重启为侏罗纪世界主题公园，人类培育出基因改造的暴虐霸王龙，这只极具智慧与攻击性的恐龙逃脱牢笼，引发公园大乱。",
+                "poster_url": "JurassicWorld.jpg",
+                "tags": [tags[0], tags[4]]  # 科幻、动作
+            },
+            {
+                "title": "致命魔术",
+                "release_year": 2006,
+                "description": "两位魔术师伯登与安吉尔从合作伙伴变成死敌，他们互相较劲，不断升级魔术技巧，甚至不惜付出生命代价，只为揭开对方魔术的秘密。",
+                "poster_url": "ThePrestige.jpg",
+                "tags": [tags[1], tags[8]]  # 悬疑、剧情
+            },
+            {
+                "title": "三傻大闹宝莱坞",
+                "release_year": 2009,
+                "description": "兰彻是皇家工程学院的异类，他不循规蹈矩，用独特的方式追求知识与梦想，影响着身边的好友，也与校长展开了一系列有趣的较量。",
+                "poster_url": "3Idiots.jpg",
+                "tags": [tags[2], tags[8]]  # 剧情、冒险
+            },
+            {
+                "title": "复仇者联盟：无限战争",
+                "release_year": 2018,
+                "description": "灭霸为收集无限宝石，踏遍宇宙各个角落，复仇者联盟与银河护卫队联手对抗，却难以阻挡灭霸的脚步，最终面临宇宙半数生命消失的悲剧。",
+                "poster_url": "AvengersInfinityWar.jpg",
+                "tags": [tags[0], tags[4]]  # 科幻、动作
+            },
+            {
+                "title": "哈利·波特与魔法石",
+                "release_year": 2001,
+                "description": "孤儿哈利·波特发现自己是巫师，进入霍格沃茨魔法学校学习，结识了罗恩与赫敏，三人一起揭开魔法石的秘密，对抗邪恶的伏地魔。",
+                "poster_url": "HarryPotterAndTheSorcerersStone.jpg",
+                "tags": [tags[1], tags[9]]  # 奇幻、冒险
+            },
+            {
+                "title": "七宗罪",
+                "release_year": 1995,
+                "description": "老侦探沙摩塞与新搭档米尔斯联手调查一系列连环杀人案，凶手按照暴食、贪婪、懒惰等七宗罪进行作案，最终的结局令人震撼。",
+                "poster_url": "Se7en.jpg",
+                "tags": [tags[1], tags[8]]  # 悬疑、犯罪
+            },
+            {
+                "title": "哪吒之魔童降世",
+                "release_year": 2019,
+                "description": "哪吒本是灵珠转世，却因意外成为魔童，从小遭受世人排挤，他在敖丙的陪伴与父母的关爱下，打破命运的诅咒，诠释“我命由我不由天”。",
+                "poster_url": "NeZha.jpg",
+                "tags": [tags[2], tags[8]]
+            },
+            {
+                "title": "速度与激情7",
+                "release_year": 2015,
+                "description": "多米尼克团队击败欧文·肖后，遭到其哥哥戴克·肖的疯狂复仇，团队成员接连遇险，他们联手展开反击，同时完成一项惊险的营救任务。",
+                "poster_url": "Furious7.jpg",
+                "tags": [tags[4], tags[8]]
+            },
+            {
+                "title": "当幸福来敲门",
+                "release_year": 2006,
+                "description": "克里斯·加德纳生意失败，妻子离家，他带着儿子过着颠沛流离的生活，凭借不懈的努力，终于在股票经纪公司站稳脚跟，迎来幸福。",
+                "poster_url": "ThePursuitOfHappyness.jpg",
+                "tags": [tags[8]]  # 剧情、冒险
+            },
+            {
+                "title": "阿凡达",
+                "release_year": 2009,
+                "description": "前海军陆战队员杰克来到潘多拉星球，通过阿凡达与纳美族人接触，在人类与纳美族的战争中，他选择站在纳美族一边，守护潘多拉的家园。",
+                "poster_url": "Avatar.jpg",
+                "tags": [tags[0], tags[4]]  # 科幻、动作
+            },
+            {
+                "title": "杀人回忆",
+                "release_year": 2003,
+                "description": "韩国小镇接连发生年轻女性被奸杀的案件，两名警察联手调查，线索不断涌现却又屡屡中断，案件始终未能告破，成为永恒的悬案。",
+                "poster_url": "MemoriesOfMurder.jpg",
+                "tags": [tags[1], tags[8]]  # 悬疑、犯罪
+            },
+            {
+                "title": "怦然心动",
+                "release_year": 2010,
+                "description": "朱莉从小就喜欢邻居布莱斯，而布莱斯却对她避之不及，随着时间的推移，两人在相处中逐渐改变对彼此的看法，收获了纯粹的青春爱情。",
+                "poster_url": "Flipped.jpg",
+                "tags": [tags[3], tags[8]]  # 爱情、剧情
+            },
+            {
+                "title": "奇异博士",
+                "release_year": 2016,
+                "description": "神经外科医生斯特兰奇因车祸失去双手手术能力，为寻求治愈，他远赴尼泊尔，拜入古一法师门下，学习魔法，最终成为守护地球的至尊法师。",
+                "poster_url": "DoctorStrange.jpg",
+                "tags": [tags[1], tags[9]]  # 科幻、奇幻
+            },
+            {
+                "title": "教父2",
+                "release_year": 1974,
+                "description": "影片双线并行，一方面讲述迈克尔·柯里昂巩固家族黑帮势力，另一方面回忆老教父维托·柯里昂早年移民美国，一步步建立黑帮帝国的历程。",
+                "poster_url": "TheGodfatherPartII.jpg",
+                "tags": [tags[8]]  # 剧情、犯罪
+            },
+            {
+                "title": "寻梦环游记",
+                "release_year": 2017,
+                "description": "小男孩米格热爱音乐，却遭到家族的禁止，他在亡灵节意外进入亡灵世界，寻找自己的曾曾祖父，最终揭开家族的秘密，也重拾了亲情。",
+                "poster_url": "Coco.jpg",
+                "tags": [tags[9], tags[8]]  # 奇幻、剧情
+            },
+            {
+                "title": "勇闯夺命岛",
+                "release_year": 1996,
+                "description": "汉默将军因不满政府对阵亡士兵的待遇，占领恶魔岛，扣押人质，威胁使用毒气弹，化学专家与前特种兵联手，潜入孤岛展开营救。",
+                "poster_url": "TheRock.jpg",
+                "tags": [tags[8], tags[5]]  # 动作、冒险
+            },
+            {
+                "title": "星际迷航：暗黑无界",
+                "release_year": 2013,
+                "description": "企业号船员在执行任务时，遭遇神秘反派可汗的袭击，可汗拥有超强的智力与体能，他的出现给星际联邦带来巨大危机，船员们拼死对抗。",
+                "poster_url": "StarTrekIntoDarkness.jpg",
+                "tags": [tags[0], tags[4]]  # 科幻、动作
+            },
+            {
+                "title": "无间道",
+                "release_year": 2002,
+                "description": "陈永仁潜伏在黑帮内部做卧底，刘建明潜伏在警局做黑帮内应，两人在各自的阵营中小心翼翼，互相试探，最终展开一场正邪较量。",
+                "poster_url": "InfernalAffairs.jpg",
+                "tags": [tags[1], tags[8]]  # 悬疑、犯罪
+            },
+            {
+                "title": "爱乐之城",
+                "release_year": 2016,
+                "description": "米娅是怀揣演员梦的服务生，塞巴斯汀是执着于爵士乐的钢琴家，两人在洛杉矶相遇相恋，为了梦想互相扶持，最终却走向了不同的人生。",
+                "poster_url": "LaLaLand.jpg",
+                "tags": [tags[3], tags[8]]  # 爱情、剧情
+            },
+            {
+                "title": "雷神3：诸神黄昏",
+                "release_year": 2017,
+                "description": "雷神托尔被囚禁在萨卡星，失去了雷神之锤，他必须在有限的时间内赶回阿斯加德，阻止死神海拉毁灭家园，与绿巨人联手展开一场大战。",
+                "poster_url": "ThorRagnarok.jpg",
+                "tags": [tags[0], tags[4]]  # 科幻、动作
+            },
+            {
+                "title": "禁闭岛",
+                "release_year": 2010,
+                "description": "联邦探员泰迪前往禁闭岛精神病院调查女病人失踪案，随着调查的深入，他发现岛上隐藏着诸多秘密，而自己的记忆也变得模糊不清。",
+                "poster_url": "ShutterIsland.jpg",
+                "tags": [tags[1], tags[5]]  # 悬疑、惊悚
+            },
+            {
+                "title": "狮子王",
+                "release_year": 1994,
+                "description": "小狮子辛巴是荣耀国的王子，叔叔刀疤觊觎王位，设计害死老国王木法沙，辛巴被迫流亡，最终在朋友的帮助下，重返荣耀国夺回王位。",
+                "poster_url": "TheLionKing.jpg",
+                "tags": [tags[6], tags[8]]  # 奇幻、剧情
+            },
+            {
+                "title": "黑鹰坠落",
+                "release_year": 2001,
+                "description": "美军在索马里执行抓捕任务，不料遭遇当地武装分子的顽强抵抗，黑鹰直升机被击落，士兵们陷入重围，展开了一场惨烈的生死突围。",
+                "poster_url": "BlackHawkDown.jpg",
+                "tags": [tags[4]] # 动作、战争
+            },
+            {
+                "title": "蝴蝶效应",
+                "release_year": 2004,
+                "description": "埃文发现自己拥有通过日记回到过去的能力，他试图改变过去的遗憾，却发现每一次改变都会引发更糟糕的连锁反应，最终陷入无法挽回的困境。",
+                "poster_url": "TheButterflyEffect.jpg",
+                "tags": [tags[0], tags[1]]  # 科幻、悬疑
+            },
+
+            {
+                "title": "战狼2",
+                "release_year": 2017,
+                "description": "冷锋被开除军籍后，远赴非洲，恰逢当地爆发战乱，他无法忘记军人的使命，孤身一人深入险境，营救中国公民与当地平民，彰显中国军人风采。",
+                "poster_url": "WolfWarrior2.jpg",
+                "tags": [tags[4]]  # 动作、战争
             }
 
         ]

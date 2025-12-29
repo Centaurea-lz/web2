@@ -18,13 +18,13 @@
             {% endfor %}
         </div>
         <p class="fs-5">{{ movie.description }}</p>
-        {% if current_user.is_authenticated %}
-        <button id="like-btn-{{ movie.id }}" class="btn btn-success mb-4"
-                onclick="likeMovie({{ movie.id }})"
-                {% if current_user in movie.likers %}disabled{% endif %}>
-            {% if current_user in movie.likers %}已点赞{% else %}点赞该影片{% endif %}
-        </button>
-        {% endif %}
+       {% if current_user.is_authenticated %}
+<button id="like-btn-{{ movie.id }}" class="btn btn-success mb-4"
+        onclick="likeMovie({{ movie.id }})">
+    {% if current_user in movie.likers %}已点赞{% else %}点赞该影片{% endif %}
+</button>
+{% endif %}
+
     </div>
 </div>
 

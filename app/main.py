@@ -29,6 +29,7 @@ def index():
     tags = Tag.query.all()
     # 将 pagination 传递给模板（用于前端分页控件）
     return render_template('index.html', movies=movies, tags=tags, pagination=pagination)
+
 # 影视详情页（含评论功能）
 @main.route('/movie/<int:movie_id>', methods=['GET', 'POST'])
 def movie_detail(movie_id):
@@ -58,7 +59,7 @@ def movie_detail(movie_id):
     return render_template('movie_detail.html', movie=movie, reviews=reviews, tags=tags)
 
 
-# AJAX点赞功能（高级功能）【修正路由语法】
+# AJAX点赞功能（你的原有接口，无需修改，保持兼容）
 @main.route('/like/<int:movie_id>', methods=['POST'])
 @login_required
 def like_movie(movie_id):
@@ -70,6 +71,8 @@ def like_movie(movie_id):
     current_user.liked_movies.append(movie)
     db.session.commit()
     return jsonify({'success': True, 'msg': '点赞成功'})
+
+
 
 
 # 影视推荐（高级功能：基于点赞标签推荐）
@@ -104,3 +107,27 @@ def search_movies():
     else:
         movies = []
     return render_template('search_results.html', movies=movies, query=query)
+
+
+# 个人中心路由（需要登录才能访问）
+@main.route('/profile')
+@login_required
+def profile():
+    """个人界面：展示用户信息及点赞的电影"""
+    # 直接通过关联属性获取当前用户点赞的所有电影，无需手动查询关联表
+    liked_movies = current_user.liked_movies
+    return render_template('profile.html', user=current_user, liked_movies=liked_movies)
+
+# 新增：AJAX取消点赞功能
+@main.route('/unlike/<int:movie_id>', methods=['POST'])
+@login_required
+def unlike_movie(movie_id):
+    """取消电影点赞接口，适配现有路由结构"""
+    movie = Movie.query.get_or_404(movie_id)
+    # 判断是否未点赞（防止无效操作）
+    if current_user not in movie.likers:
+        return jsonify({'success': False, 'msg': '你尚未点赞该影片，无需取消'})
+    # 移除点赞（自动维护user_like关联表）
+    current_user.liked_movies.remove(movie)
+    db.session.commit()
+    return jsonify({'success': True, 'msg': '取消点赞成功'})
