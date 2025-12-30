@@ -1,43 +1,153 @@
-// 点赞/取消点赞功能（修复二次操作问题）
 function likeMovie(movieId) {
+
     const btn = document.getElementById(`like-btn-${movieId}`);
-    // 防止重复点击（可选，优化体验）
-    if (btn.dataset.loading) return;
-    btn.dataset.loading = true;
+
+    // 恢复：获取CSRF令牌
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-    // 精准判断按钮当前状态
-    const isLiked = btn.innerText.trim() === '已点赞';
-    // 动态切换请求地址
-    const url = isLiked ? `/unlike/${movieId}` : `/like/${movieId}`;
 
-    fetch(url, {
+
+    fetch(`/like/${movieId}`, {
+
         method: 'POST',
+
         headers: {
+
             'Content-Type': 'application/json',
+
+            // 恢复：携带CSRF令牌
+
             'X-CSRFToken': csrfToken
+
         }
+
     })
-    .then(response => {
-        if (!response.ok) throw new Error(`HTTP错误：${response.status}`);
-        return response.json();
-    })
+
+    .then(response => response.json())
+
     .then(data => {
+
         if (data.success) {
-            // 1. 动态更新按钮文本
-            btn.innerText = isLiked ? '点赞该影片' : '已点赞';
-            // 2. 动态控制禁用状态（核心修复：取消点赞后启用，点赞后无需禁用）
-            // 移除固定禁用，改为可选（若需禁用点赞后按钮，取消点赞时必须恢复启用）
-            btn.disabled = !isLiked; // 点赞后：disabled=true；取消点赞后：disabled=false
+
+            btn.innerText = '已点赞';
+
+            btn.disabled = true;
+
+            alert(data.msg);
+
+        } else {
+
+            alert(data.msg);
+
         }
-        alert(data.msg);
+
     })
+
     .catch(error => {
-        console.error('操作失败：', error);
-        alert('网络错误，操作失败');
-    })
-    .finally(() => {
-        // 移除加载状态，允许再次点击
-        delete btn.dataset.loading;
+
+        console.error('点赞请求失败：', error);
+
+        alert('网络错误，点赞失败');
+
     });
+
+}
+
+
+// 通用AJAX点赞函数
+
+function likeMovieAjax(movieId) {
+
+    const btn = document.getElementById(`like-btn-${movieId}`);
+
+    const likeCountElement = document.querySelector(`.like-count-${movieId}`);
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+
+    const originalText = btn.innerHTML;
+
+    const originalDisabled = btn.disabled;
+
+
+
+    // 显示加载状态
+
+    btn.disabled = true;
+
+    btn.innerHTML = '处理中...';
+
+
+    fetch(`/like/${movieId}`, {
+
+        method: 'POST',
+
+        headers: {
+
+            'Content-Type': 'application/json',
+
+            'X-CSRFToken': csrfToken
+
+        }
+
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        if (data.success) {
+
+            if (data.liked) {
+
+                btn.innerHTML = '❤️ 已点赞';
+
+                btn.dataset.liked = 'true';
+
+                btn.disabled = true;
+
+            } else {
+
+                btn.innerHTML = '💙 点赞';
+
+                btn.dataset.liked = 'false';
+
+                btn.disabled = false;
+
+            }
+
+
+
+            // 更新点赞数
+
+            if (likeCountElement && data.likes_count !== undefined) {
+
+                likeCountElement.textContent = `(${data.likes_count} 人点赞)`;
+
+            }
+
+        } else {
+
+            alert(data.msg || '操作失败，请重试。');
+
+            btn.innerHTML = originalText;
+
+            btn.disabled = originalDisabled;
+
+        }
+
+    })
+
+    .catch(error => {
+
+        console.error('点赞请求失败：', error);
+
+        alert('网络错误，点赞失败');
+
+        btn.innerHTML = originalText;
+
+        btn.disabled = originalDisabled;
+
+    });
+
 }

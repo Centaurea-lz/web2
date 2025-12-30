@@ -25,14 +25,15 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(256), nullable=False)
     # 关联评论
     reviews = db.relationship('Review', backref='author', lazy=True, cascade="all, delete-orphan")
-    # 关联点赞的电影
-    liked_movies = db.relationship('Movie', secondary=user_like, backref=db.backref('likers', lazy='dynamic'))
+    # 关联点赞的电影 —— 关键修改：移除 lazy='dynamic'
+    liked_movies = db.relationship('Movie', secondary=user_like, backref='likers')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
 
 class Movie(db.Model):
     __tablename__ = 'movie'
@@ -46,10 +47,12 @@ class Movie(db.Model):
     # 关联评论
     reviews = db.relationship('Review', backref='movie', lazy=True, cascade="all, delete-orphan")
 
+
 class Tag(db.Model):
     __tablename__ = 'tag'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), unique=True, nullable=False)
+
 
 class Review(db.Model):
     __tablename__ = 'review'
@@ -57,6 +60,15 @@ class Review(db.Model):
     content = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False, default=5)  # 1-5分
     create_time = db.Column(db.DateTime, default=datetime.utcnow)
-    # 外键关联
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     movie_id = db.Column(db.Integer, db.ForeignKey('movie.id'), nullable=False)
+
+
+class Like(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # 关联用户
+    movie_id = db.Column(db.Integer, db.ForeignKey('movie.id'), nullable=False)  # 关联电影
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # 确保一个用户只能给一个电影点一次赞（唯一约束）
+    __table_args__ = (db.UniqueConstraint('user_id', 'movie_id', name='unique_user_movie_like'),)

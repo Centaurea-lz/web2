@@ -4,7 +4,6 @@
 
 {% block content %}
 <div class="row">
-    <!-- 电影信息 -->
     <div class="col-md-4">
         <img src="/static/posters/{{ movie.poster_url }}" class="img-fluid rounded shadow" alt="{{ movie.title }} 海报"
              style="max-height: 500px;">
@@ -18,48 +17,85 @@
             {% endfor %}
         </div>
         <p class="fs-5">{{ movie.description }}</p>
-       {% if current_user.is_authenticated %}
-<button id="like-btn-{{ movie.id }}" class="btn btn-success mb-4"
-        onclick="likeMovie({{ movie.id }})">
-    {% if current_user in movie.likers %}已点赞{% else %}点赞该影片{% endif %}
-</button>
-{% endif %}
 
-    </div>
+        <!-- ✅ AJAX 点赞按钮 -->
+
+<button class="like-btn"
+        data-movie-id="{{ movie.id }}"
+        data-liked="{{ 'true' if current_user.is_authenticated and current_user in movie.likers else 'false' }}">
+    {% if current_user.is_authenticated and current_user in movie.likers %}
+        ❤️ 已点赞
+    {% else %}
+        💙 点赞
+    {% endif %}
+</button>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.like-btn').click(function() {
+        const btn = $(this);
+        const movieId = btn.data('movie-id');
+        const isLiked = btn.data('liked'); // 当前是否已点赞
+
+        // 禁用按钮防止重复点击
+        btn.prop('disabled', true).text('处理中...');
+
+        // AJAX请求
+        $.ajax({
+            url: `/movies/${movieId}/like`,
+            type: 'POST',
+            headers: {
+                'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if (response.success) {
+                    // 更新按钮状态和文本
+                    btn.data('liked', response.liked);
+                    btn.text(response.liked ? '❤️ 已点赞' : '💙 点赞');
+                } else {
+                    alert(response.message || '操作失败');
+                }
+            },
+            error: function() {
+                alert('网络错误，请重试');
+            },
+            complete: function() {
+                btn.prop('disabled', false); // 恢复按钮可点击
+            }
+        });
+    });
+});
+</script>    </div>
 </div>
 
 <!-- 评论区 -->
 <div class="mt-5">
     <h2>评论区</h2>
     <hr>
-    <!-- 提交评论（仅登录用户） -->
     {% if current_user.is_authenticated %}
     <div class="card mb-4">
         <div class="card-body">
             <h5 class="card-title">发表评论</h5>
-            <!-- 发表评论表单部分 -->
-<form method="POST" action="{{ url_for('main.movie_detail', movie_id=movie.id) }}">
-    <!-- 添加CSRF令牌 -->
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-    <div class="mb-3">
-        <label for="rating" class="form-label">评分</label>
-        <select class="form-select" id="rating" name="rating" required>
-            <option value="5">★★★★★</option>
-            <option value="4">★★★★☆</option>
-            <option value="3">★★★☆☆</option>
-            <option value="2">★★☆☆☆</option>
-            <option value="1">★☆☆☆☆</option>
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="review_content" class="form-label">评论内容</label>
-        <textarea class="form-control" id="review_content" name="review_content" rows="3"
-                  placeholder="分享你的观影感受..." required></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">提交评论</button>
-</form>
-
+            <form method="POST" action="{{ url_for('main.movie_detail', movie_id=movie.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-3">
+                    <label for="rating" class="form-label">评分</label>
+                    <select class="form-select" id="rating" name="rating" required>
+                        <option value="5">★★★★★</option>
+                        <option value="4">★★★★☆</option>
+                        <option value="3">★★★☆☆</option>
+                        <option value="2">★★☆☆☆</option>
+                        <option value="1">★☆☆☆☆</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="review_content" class="form-label">评论内容</label>
+                    <textarea class="form-control" id="review_content" name="review_content" rows="3"
+                              placeholder="分享你的观影感受..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">提交评论</button>
+            </form>
         </div>
     </div>
     {% else %}
@@ -68,7 +104,6 @@
     </div>
     {% endif %}
 
-    <!-- 评论列表 -->
     <div class="comments-list">
         {% for review in reviews %}
         <div class="card mb-3">
@@ -94,3 +129,4 @@
     </div>
 </div>
 {% endblock %}
+

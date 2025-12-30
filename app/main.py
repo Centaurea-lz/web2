@@ -1,46 +1,36 @@
 from flask import Blueprint, render_template, jsonify, request, flash, url_for, redirect
 from flask_login import current_user, login_required
 from . import db
-from .models import Movie, Tag, Review, user_like
-from sqlalchemy import desc  # 新增：可选，用于排序
+from .models import Movie, Tag, Review, Like
 
 main = Blueprint('main', __name__)
 
 
-# 首页：影视列表
 @main.route('/')
 def index():
-    # 获取页码参数，默认为第1页
     page = request.args.get('page', 1, type=int)
-    # 支持按标签筛选
     tag_id = request.args.get('tag_id')
 
-    # 构建查询对象
     query = Movie.query
     if tag_id and tag_id.isdigit():
         tag = Tag.query.get(int(tag_id))
         if tag:
-            query = tag.movies  # 关联查询该标签下的电影
+            query = tag.movies
 
-    # 分页查询（每页8条数据）
     pagination = query.paginate(page=page, per_page=8)
-    movies = pagination.items  # 当前页的电影列表
-
+    movies = pagination.items
     tags = Tag.query.all()
-    # 将 pagination 传递给模板（用于前端分页控件）
     return render_template('index.html', movies=movies, tags=tags, pagination=pagination)
 
-# 影视详情页（含评论功能）
+
 @main.route('/movie/<int:movie_id>', methods=['GET', 'POST'])
 def movie_detail(movie_id):
     movie = Movie.query.get_or_404(movie_id)
-    # 修正：通过Query对象查询评论并排序
     reviews = Review.query.filter_by(movie_id=movie_id).order_by(Review.create_time.desc()).all()
     tags = Tag.query.all()
 
     if request.method == 'POST' and current_user.is_authenticated:
-        # 提交评论
-        content = request.form.get('review_content').strip()
+        content = request.form.get('review_content', '').strip()
         rating = request.form.get('rating')
         if not content or not rating:
             flash('评论内容和评分不能为空！', 'danger')
@@ -59,27 +49,37 @@ def movie_detail(movie_id):
     return render_template('movie_detail.html', movie=movie, reviews=reviews, tags=tags)
 
 
-# AJAX点赞功能（你的原有接口，无需修改，保持兼容）
-@main.route('/like/<int:movie_id>', methods=['POST'])
-@login_required
+@main.route('/movies/<int:movie_id>/like', methods=['POST'])
+@login_required  # 需登录才能点赞（可选，根据需求决定）
 def like_movie(movie_id):
     movie = Movie.query.get_or_404(movie_id)
-    # 判断是否已点赞
-    if current_user in movie.likers:
-        return jsonify({'success': False, 'msg': '已点赞过该影片'})
-    # 添加点赞
-    current_user.liked_movies.append(movie)
-    db.session.commit()
-    return jsonify({'success': True, 'msg': '点赞成功'})
+
+    # 查找用户对该电影的点赞记录
+    like_record = Like.query.filter_by(
+        user_id=current_user.id,
+        movie_id=movie_id
+    ).first()
+
+    try:
+        if like_record:
+            # 已点赞 → 取消点赞（删除记录）
+            db.session.delete(like_record)
+            db.session.commit()
+            return jsonify({'success': True, 'liked': False})
+        else:
+            # 未点赞 → 新增点赞（添加记录）
+            new_like = Like(user_id=current_user.id, movie_id=movie_id)
+            db.session.add(new_like)
+            db.session.commit()
+            return jsonify({'success': True, 'liked': True})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 
-
-
-# 影视推荐（高级功能：基于点赞标签推荐）
 @main.route('/recommend')
 @login_required
 def recommend():
-    # 获取用户点赞电影的所有标签ID
     liked_tag_ids = set()
     for movie in current_user.liked_movies:
         for tag in movie.tags:
@@ -89,45 +89,21 @@ def recommend():
         flash('暂无点赞记录，无法生成个性化推荐', 'info')
         return redirect(url_for('main.index'))
 
-    # 推荐逻辑：含相同标签且未点赞的电影
+    liked_movie_ids = [m.id for m in current_user.liked_movies]
     recommended_movies = Movie.query.filter(
         Movie.tags.any(Tag.id.in_(liked_tag_ids)),
-        Movie.id.notin_([m.id for m in current_user.liked_movies])
+        ~Movie.id.in_(liked_movie_ids)
     ).distinct().limit(5).all()
 
     tags = Tag.query.all()
     return render_template('recommend.html', movies=recommended_movies, tags=tags)
 
+
 @main.route('/search')
 def search_movies():
     query = request.args.get('query', '')
     if query:
-        # 这里根据你的数据模型进行查询
         movies = Movie.query.filter(Movie.title.like(f'%{query}%')).all()
     else:
         movies = []
     return render_template('search_results.html', movies=movies, query=query)
-
-
-# 个人中心路由（需要登录才能访问）
-@main.route('/profile')
-@login_required
-def profile():
-    """个人界面：展示用户信息及点赞的电影"""
-    # 直接通过关联属性获取当前用户点赞的所有电影，无需手动查询关联表
-    liked_movies = current_user.liked_movies
-    return render_template('profile.html', user=current_user, liked_movies=liked_movies)
-
-# 新增：AJAX取消点赞功能
-@main.route('/unlike/<int:movie_id>', methods=['POST'])
-@login_required
-def unlike_movie(movie_id):
-    """取消电影点赞接口，适配现有路由结构"""
-    movie = Movie.query.get_or_404(movie_id)
-    # 判断是否未点赞（防止无效操作）
-    if current_user not in movie.likers:
-        return jsonify({'success': False, 'msg': '你尚未点赞该影片，无需取消'})
-    # 移除点赞（自动维护user_like关联表）
-    current_user.liked_movies.remove(movie)
-    db.session.commit()
-    return jsonify({'success': True, 'msg': '取消点赞成功'})
