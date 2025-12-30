@@ -27,56 +27,11 @@
                 <a href="{{ url_for('main.movie_detail', movie_id=movie.id) }}" class="btn btn-sm btn-primary">查看详情</a>
 
 
-                
+
 
                 <div class="d-flex align-items-center">
 
-                    <button class="like-btn"
-        data-movie-id="{{ movie.id }}"
-        data-liked="{{ 'true' if current_user.is_authenticated and current_user in movie.likers else 'false' }}">
-    {% if current_user.is_authenticated and current_user in movie.likers %}
-        ❤️ 已点赞
-    {% else %}
-        💙 点赞
-    {% endif %}
-</button>
-                    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script>
-$(document).ready(function() {
-    $('.like-btn').click(function() {
-        const btn = $(this);
-        const movieId = btn.data('movie-id');
-        const isLiked = btn.data('liked'); // 当前是否已点赞
-
-        // 禁用按钮防止重复点击
-        btn.prop('disabled', true).text('处理中...');
-
-        // AJAX请求
-        $.ajax({
-            url: `/movies/${movieId}/like`,
-            type: 'POST',
-            headers: {
-                'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                if (response.success) {
-                    // 更新按钮状态和文本
-                    btn.data('liked', response.liked);
-                    btn.text(response.liked ? '❤️ 已点赞' : '💙 点赞');
-                } else {
-                    alert(response.message || '操作失败');
-                }
-            },
-            error: function() {
-                alert('网络错误，请重试');
-            },
-            complete: function() {
-                btn.prop('disabled', false); // 恢复按钮可点击
-            }
-        });
-    });
-});
-</script>
+                    
 
 
 
