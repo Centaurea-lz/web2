@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, jsonify, request, flash, url_for, 
 from flask_login import current_user, login_required
 from . import db
 from .models import Movie, Tag, Review, Like
-
+from sqlalchemy.exc import IntegrityError
 main = Blueprint('main', __name__)
 
 
@@ -50,32 +50,39 @@ def movie_detail(movie_id):
 
 
 @main.route('/movies/<int:movie_id>/like', methods=['POST'])
-@login_required  # 需登录才能点赞（可选，根据需求决定）
+@login_required
 def like_movie(movie_id):
+    # 1. 验证电影存在
     movie = Movie.query.get_or_404(movie_id)
 
-    # 查找用户对该电影的点赞记录
-    like_record = Like.query.filter_by(
-        user_id=current_user.id,
-        movie_id=movie_id
-    ).first()
-
     try:
-        if like_record:
-            # 已点赞 → 取消点赞（删除记录）
-            db.session.delete(like_record)
+        # 2. 通过关联关系判断是否已点赞（无需查询user_like表）
+        if movie in current_user.liked_movies:
+            # 已点赞：取消点赞（从用户点赞列表中移除）
+            current_user.liked_movies.remove(movie)
             db.session.commit()
-            return jsonify({'success': True, 'liked': False})
+            return jsonify({
+                'success': True,
+                'liked': False,
+                'msg': '取消点赞成功（已更新user_like表）'
+            })
         else:
-            # 未点赞 → 新增点赞（添加记录）
-            new_like = Like(user_id=current_user.id, movie_id=movie_id)
-            db.session.add(new_like)
+            # 未点赞：添加点赞（将电影加入用户点赞列表）
+            current_user.liked_movies.append(movie)
             db.session.commit()
-            return jsonify({'success': True, 'liked': True})
+            return jsonify({
+                'success': True,
+                'liked': True,
+                'msg': '点赞成功（已写入user_like表）'
+            })
+
     except Exception as e:
         db.session.rollback()
-        return jsonify({'success': False, 'message': str(e)}), 500
-
+        print(f"点赞操作报错：{e}")
+        return jsonify({
+            'success': False,
+            'message': f'操作失败：{str(e)}'
+        }), 500
 
 @main.route('/recommend')
 @login_required
