@@ -114,3 +114,12 @@ def search_movies():
     else:
         movies = []
     return render_template('search_results.html', movies=movies, query=query)
+
+# 个人中心路由（需要登录才能访问）
+@main.route('/profile')
+@login_required
+def profile():
+    """个人界面：展示用户信息及点赞的电影"""
+    # 直接通过关联属性获取当前用户点赞的所有电影，无需手动查询关联表
+    liked_movies = current_user.liked_movies
+    return render_template('profile.html', user=current_user, liked_movies=liked_movies)
